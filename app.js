@@ -40,10 +40,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser())
 
-app.get('/api/v1/test',function(req,res){
-	console.log("in backend Post call ");
-	res.json("yes");
-  });
+
 app.use('/api/v1/users', users);
 app.use('/api/v1/customer', customer);
 app.use('/api/v1/generate_uid', generate_uid);
