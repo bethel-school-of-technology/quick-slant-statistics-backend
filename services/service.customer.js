@@ -49,7 +49,7 @@ class CustomerService
 			};
 		}
 
-		let customer = new CustomerModel(data.first_name, data.last_name, data.email, data.username, data.password);
+		let customer = new CustomerModel(data.uid, data.first_name, data.last_name, data.email, data.username, data.password);
 
 		customer.uid = 'c' + counter++;
 
