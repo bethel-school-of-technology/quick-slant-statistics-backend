@@ -11,6 +11,8 @@ router.get('/', async function(req, res, next)
 /* adds a new customer to the list */
 router.post('/', async (req, res, next) =>
 {
+	
+	
 	const body = req.body;
 
 	try
