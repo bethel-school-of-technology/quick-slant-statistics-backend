@@ -20,6 +20,11 @@ var chat = require('./routes/chat');
 
 var app = express();
 
+let http = require('http');
+let server = http.Server(app);
+let socketIO = require('socket.io');
+let io = socketIO(server);
+
 /*app.use(logger('dev'));*/
 app.use(cors());
 router.use(bodyParser.urlencoded({ extended:  false }));
@@ -51,6 +56,20 @@ const  createUser  = (user, cb) => {
         cb(err)
     });
 }
+
+const port = process.env.PORT || 3050;
+io.on('connection', (socket) => {
+    console.log('user connected');
+
+    socket.on('new-message', (message) => {
+        io.emit('new-message', message);
+    });
+});
+
+server.listen(port, () => {
+    console.log(`started on port: ${port}`);
+});
+
 
 createUsersTable();
 
@@ -113,11 +132,12 @@ router.post('/login', (req, res) => {
     });
 });
 
+
 app.use(router);
-const  port  =  process.env.PORT  ||  3030;
-const  server  =  app.listen(port, () => {
+/*const  port  =  process.env.PORT  ||  3000;
+const  server  =  server.listen(port, () => {
     console.log('Server listening at http://localhost:'  +  port);
-}); 
+}); */
 
 let reporter = function (type, ...rest)
 {
