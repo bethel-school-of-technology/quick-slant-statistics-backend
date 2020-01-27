@@ -1,0 +1,98 @@
+{
+    "tables": {
+        "SequelizeMeta": {
+            "tableName": "SequelizeMeta",
+            "schema": {
+                "name": {
+                    "allowNull": false,
+                    "primaryKey": true,
+                    "field": "name",
+                    "seqType": "Sequelize.STRING(255)"
+                }
+            },
+            "indexes": []
+        },
+        "customer": {
+            "tableName": "customer",
+            "schema": {
+                "guid": {
+                    "allowNull": false,
+                    "field": "guid",
+                    "seqType": "Sequelize.STRING(40)"
+                },
+                "uid": {
+                    "allowNull": false,
+                    "primaryKey": true,
+                    "autoIncrement": true,
+                    "field": "uid",
+                    "seqType": "Sequelize.INTEGER(11)"
+                },
+                "first_name": {
+                    "allowNull": true,
+                    "field": "first_name",
+                    "seqType": "Sequelize.STRING(45)"
+                },
+                "last_name": {
+                    "allowNull": true,
+                    "field": "last_name",
+                    "seqType": "Sequelize.STRING(45)"
+                },
+                "email": {
+                    "allowNull": true,
+                    "unique": true,
+                    "field": "email",
+                    "seqType": "Sequelize.STRING(100)"
+                },
+                "username": {
+                    "allowNull": true,
+                    "field": "username",
+                    "seqType": "Sequelize.STRING(45)"
+                },
+                "password": {
+                    "allowNull": true,
+                    "field": "password",
+                    "seqType": "Sequelize.STRING(45)"
+                },
+                "token": {
+                    "allowNull": true,
+                    "field": "token",
+                    "seqType": "Sequelize.STRING(45)"
+                }
+            },
+            "indexes": []
+        },
+        "teams": {
+            "tableName": "teams",
+            "schema": {
+                "id": {
+                    "allowNull": false,
+                    "primaryKey": true,
+                    "field": "id",
+                    "seqType": "Sequelize.INTEGER(11)"
+                },
+                "name": {
+                    "allowNull": true,
+                    "field": "name",
+                    "seqType": "Sequelize.STRING(100)"
+                },
+                "division": {
+                    "allowNull": true,
+                    "field": "division",
+                    "seqType": "Sequelize.STRING(100)"
+                },
+                "wins": {
+                    "allowNull": true,
+                    "field": "wins",
+                    "seqType": "Sequelize.INTEGER(11)"
+                },
+                "lossess": {
+                    "allowNull": true,
+                    "field": "lossess",
+                    "seqType": "Sequelize.INTEGER(11)"
+                }
+            },
+            "indexes": []
+        }
+    },
+    "revision": 1
+}

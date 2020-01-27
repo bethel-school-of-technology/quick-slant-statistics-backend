@@ -1,12 +1,16 @@
 var express = require('express');
 var path = require('path');
 var cors = require('cors');
-/*var logger = require('morgan');*/
+var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var sqlite3  =  require('sqlite3').verbose();
+// var sqlite3  =  require('sqlite3').verbose();
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcryptjs');
+var mysql = require ('mysql');
+
+var createError = require ('http-errors');
+var models = require ('./models');
 
 const SECRET_KEY = 'secretkey23456';
 const  router  =  express.Router();
@@ -16,43 +20,85 @@ const  router  =  express.Router();
 var generate_uid = require('./routes/generate_uid');
 var customer = require('./routes/customer');
 var chat = require('./routes/chat');
-
+var viewteams = require ('./routes/viewteams');
 
 var app = express();
+
+let http = require('http');
+let server = http.Server(app);
+let socketIO = require('socket.io');
+let io = socketIO(server);
 
 /*app.use(logger('dev'));*/
 app.use(cors());
 router.use(bodyParser.urlencoded({ extended:  false }));
 router.use(bodyParser.json());
-const database = new sqlite3.Database("./quick_slants_stats.db");
+// const database = new sqlite3.Database("./quick_slants_stats.db");
 
-const  createUsersTable  = () => {
-    const  sqlQuery  =  `
-        CREATE TABLE IF NOT EXISTS users (
-        uid string PRIMARY KEY,
-		first_name text,
-		last_name text,
-		email text UNIQUE,
-		username text,
-        password text)`;
+// const  createUsersTable  = () => {
+//     const  sqlQuery  =  `
+//         CREATE TABLE IF NOT EXISTS users (
+//         uid string PRIMARY KEY,
+// 		first_name text,
+// 		last_name text,
+// 		email text UNIQUE,
+// 		username text,
+//         password text)`;
 
-    return  database.run(sqlQuery);
-}
+//     return  database.run(sqlQuery);
+// }
 
 
-const  findUserByUsername  = (username, cb) => {
-    return  database.get(`SELECT * FROM users WHERE username = ?`,[username], (err, row) => {
-            cb(err, row)
+// const  findUserByUsername  = (username, cb) => {
+//     return  database.get(`SELECT * FROM users WHERE username = ?`,[username], (err, row) => {
+//             cb(err, row)
+//     });
+// }
+
+// const  createUser  = (user, cb) => {
+//     return  database.run('INSERT INTO users (uid, first_name, last_name, email, username, password) VALUES (?,?,?,?,?,?)',user, (err) => {
+//         cb(err)
+//     });
+// }
+
+// app.use(bodyparser.json());
+// var mysqlConnection = mysql.createConnection({
+//   host: 'localhost',
+//   user: 'root',
+//   password: 'password1!',
+//   database: 'quickslantstats'
+// });
+// mysqlConnection.connect((err) => {
+//   if (!err)
+//       console.log('DB connection succeded.');
+//   else  
+//       console.log('DB connection failed \n Error : ' + JSON.stringify(err, undefined));
+// });
+// app.listen(3001, ()=>console.log('Express server is running at port no : 3001'));
+// app.get('/teams',(res,req) =>{
+//     mysqlConnection.query('SELECT * FROM Teams',(err, rows, fields) => {
+//       if(!err)
+//         console.log(rows);
+//       else
+//         console.log(err);
+//     })
+// });
+
+const port = process.env.PORT || 3050;
+io.on('connection', (socket) => {
+    console.log('user connected');
+
+    socket.on('new-message', (message) => {
+        io.emit('new-message', message);
     });
-}
+});
 
-const  createUser  = (user, cb) => {
-    return  database.run('INSERT INTO users (uid, first_name, last_name, email, username, password) VALUES (?,?,?,?,?,?)',user, (err) => {
-        cb(err)
-    });
-}
+server.listen(port, () => {
+    console.log(`started on port: ${port}`);
+});
 
-createUsersTable();
+
+// createUsersTable();
 
 router.get('/chat', (req, res) => {
 	console.log("is this working")
@@ -113,11 +159,12 @@ router.post('/login', (req, res) => {
     });
 });
 
+
 app.use(router);
-const  port  =  process.env.PORT  ||  3030;
-const  server  =  app.listen(port, () => {
+/*const  port  =  process.env.PORT  ||  3000;
+const  server  =  server.listen(port, () => {
     console.log('Server listening at http://localhost:'  +  port);
-}); 
+}); */
 
 let reporter = function (type, ...rest)
 {
@@ -149,11 +196,11 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-//app.use('/api/v1/users', users);
+// app.use('/api/v1/users', users);
 app.use('/api/v1/customer', customer);
 app.use('/api/v1/generate_uid', generate_uid);
 app.use('/', chat);
-
+app.use ('/view', viewteams);
 
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -172,7 +219,10 @@ app.use(function(req, res, next) {
 
  // catch 404 and forward to error handler
  app.use(function(req, res, next) {
-   res.render('index');
+   res.send("404 error");
  });
 
+ models.sequelize.sync().then(function (){
+     console.log("database is connected")
+ });
 module.exports = app;
