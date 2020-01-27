@@ -1,4 +1,4 @@
-const CustomerModel = require("../models/model.customer");
+// const CustomerModel = require("../models/customer");
 let Validator = require('fastest-validator');
 
 
@@ -49,13 +49,21 @@ class CustomerService
 			};
 		}
 
-		let customer = new CustomerModel(data.uid, data.first_name, data.last_name, data.email, data.username, data.password);
+		// let customer = {
+		// 	guid: data.guid,
+		// 	first_name: data.first_name,
+		// 	last_name: data.last_name,
+		// 	email: data.email,
+		// 	username: data.username,
+		// 	password: data.password
+		//   };
 
-		customer.uid = 'c' + counter++;
+		// // customer.uid = 'c' + counter++;
 
-		customers[customer.uid] = customer;
+		// // customers[customer.uid] = customer;
 
-		return customer;
+		// return customer;
+		
 	}
 
 	static retrieve(uid)
